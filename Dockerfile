@@ -1,5 +1,12 @@
-FROM debian:stable
-RUN apt-get update && apt-get install -y --force-yes apache2
-EXPOSE 80 443
-VOLUME ["/var/www", "/var/log/apache2", "/etc/apache2"]
-ENTRYPOINT ["/usr/sbin/apache2ctl", "-D", "FOREGROUND"]
+FROM ubuntu:16.04
+MAINTAINER examples@docker.com
+
+RUN apt-get update && apt-get install -y openssh-server apache2 supervisor
+RUN mkdir -p /var/lock/apache2 /var/run/apache2 /var/run/sshd /var/log/supervisor
+
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+EXPOSE 22 80
+CMD ["/usr/bin/supervisord"]
+git clone https://github.com/cbbics/explorecalifornia.git
+mv explore_california.zip /var/www/html
